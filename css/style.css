@@ -1,6 +1,8 @@
 @import 'reset.css';
 
 *,*::before,*::after{
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -8,3 +10,33 @@ html,body{
     height: 100%;
 }
 
+:root{
+    --bg: hsla(207, 75%, 44%, 1);
+    --cerulean-crayola: hsla(199, 69%, 54%, 1);
+    --maximum-blue: hsla(191, 66%, 55%, 1);
+    --deep-saffron: hsla(29, 89%, 58%, 1);
+    --permanent-geranium-lake: hsla(1, 67%, 51%, 1);
+}
+
+body{
+    background-color: var(--bg);
+}
+
+.container{
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board{
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+}
+
+.square:nth-child(5){
+    border: 2px solid var(--deep-saffron);
+}
