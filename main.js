@@ -22,13 +22,13 @@ let game = (function(){
     }
 
     gameBoard = (function(){
-        let squares;
+        let _squares;
         
-        squares = [];
+        _squares = [];
         for(let i=0; i < 9; ++i){
-            squares.push('');
+            _squares.push('');
         }
-        squares = [
+        _squares = [
             'X', 'O', 'X',
             'O', 'X', 'O',
             ' ', 'O', 'X'
@@ -37,13 +37,25 @@ let game = (function(){
         function log(){
             let result = '';
             for(let i = 0; i < 9; i += 3){
-                result += squares[i] + squares[i+1] + squares[i+2] + '\n';
+                result += _squares[i] + _squares[i+1] + _squares[i+2] + '\n';
             }
             return result;
+        }
+
+        function getBoard(){
+            return [..._squares];
         }
 
         return {log};
     })();
 
     console.log(gameBoard.log());
+})();
+
+let ui = (function(){
+
+})();
+
+let controller = (function(){
+
 })();

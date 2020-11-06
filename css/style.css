@@ -12,10 +12,14 @@ html,body{
 
 :root{
     --bg: hsla(207, 75%, 44%, 1);
-    --cerulean-crayola: hsla(199, 69%, 54%, 1);
-    --maximum-blue: hsla(191, 66%, 55%, 1);
-    --deep-saffron: hsla(29, 89%, 58%, 1);
-    --permanent-geranium-lake: hsla(1, 67%, 51%, 1);
+    --primary: hsla(199, 69%, 54%, 1);
+    --secondary: hsla(191, 66%, 55%, 1);
+    --details: hsla(29, 89%, 58%, 1);
+    --cta: hsla(1, 67%, 51%, 1);
+
+    --text: rgba(255,255,255,0.4);
+    --grid-size: 5px;
+    --grid-color:hsla(191, 66%, 55%, 1);
 }
 
 body{
@@ -35,8 +39,32 @@ body{
     display: grid;
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
+
+    background-color: var(--primary);
+    padding: 0.8rem;
+    border-radius: 5px;
+}
+
+.square{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 6rem;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+}
+
+.square:nth-child(2), .square:nth-child(8){
+    border-left: var(--grid-size) solid var(--grid-color);
+    border-right: var(--grid-size) solid var(--grid-color);
+}
+
+.square:nth-child(4), .square:nth-child(6){
+    border-top: var(--grid-size) solid var(--grid-color);
+    border-bottom: var(--grid-size) solid var(--grid-color);
 }
 
 .square:nth-child(5){
-    border: 2px solid var(--deep-saffron);
+    border: var(--grid-size) solid var(--grid-color);
 }
