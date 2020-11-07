@@ -2,22 +2,19 @@ let game = (function(){
     let playerBehaviour, gameBoard;
 
     playerBehaviour = {
-        resetScore(){
-            return this.score = 0;
+        set name(newName){
+            this.name = newName;
+            return this.name;
         },
 
-        incrementScore(){
-            return ++this.score;
-        },
-
-        get score(){
-            return this.score;
+        get name(){
+            return this.name;
         }
     };
 
-    function createPlayer(){
+    function createPlayer(name = ''){
         let player = Object.create(playerBehaviour);
-        score = 0;
+        player.name = name;
         return player;
     }
 
@@ -73,7 +70,7 @@ let game = (function(){
         return {log, getBoard, setSquare};
     })();
 
-    console.log(gameBoard.log());
+    return {gameBoard};
 })();
 
 let ui = (function(){
