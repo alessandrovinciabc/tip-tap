@@ -1,22 +1,30 @@
 let game = (function(){
-    let playerBehaviour, gameBoard;
+    let playerBehaviour, players, currentPlayer, gameBoard;
 
     playerBehaviour = {
         set name(newName){
             this.name = newName;
-            return this.name;
         },
 
         get name(){
             return this.name;
+        },
+
+        get symbol(){
+            return this.sym;
         }
     };
 
-    function createPlayer(name = ''){
+    function createPlayer(name = '', symbol = ''){
         let player = Object.create(playerBehaviour);
-        player.name = name;
+        player.nick = name;
+        player.sym = symbol;
         return player;
     }
+
+    players = [createPlayer('P1', 'X'), createPlayer('P2', 'O')];
+
+    _currentPlayer = 0;
 
     gameBoard = (function(){
         let _squares;
@@ -70,32 +78,41 @@ let game = (function(){
         return {log, getBoard, setSquare};
     })();
 
-    return {gameBoard};
+    function togglePlayer(){
+        _currentPlayer = _currentPlayer === 0 ? 1 : 0;
+        return _currentPlayer;
+    }
+
+    function setCurrentPlayer(value){
+        let int, output;
+        int = parseInt(value);
+        output = -1;
+        if(int >= 0 && int <= 1){
+            output = _currentPlayer = int;
+        }
+        return output;
+    }
+
+    function getCurrentSymbol(){
+        return players[_currentPlayer].symbol;
+    }
+
+    return {gameBoard, togglePlayer, setCurrentPlayer, getCurrentSymbol};
 })();
 
 let ui = (function(){
-    let _DOM, _playerSymbol;
+    let DOM;
 
-    _DOM = {
+    DOM = {
         board: document.querySelector('.board'),
     };
 
-    _playerSymbol = 'X';
+    
 
-    function _validateInput(input){
-        let normalized;
-        normalized = input.toUpperCase();
+    return {DOM};
+})();
 
-        switch(normalized){
-            case 'X':
-            case 'O':
-                break;
-            default:
-                return false;
-        }
-
-        return normalized;
-    }
+let controller = (function(data, view){
 
     function _handleClick(e){
         let isSquare;
@@ -103,35 +120,17 @@ let ui = (function(){
         isSquare = e.target.classList.contains('square');
 
         if(isSquare && e.target.textContent === ''){
-            e.target.textContent = _playerSymbol;
-            toggleSymbol();
+            e.target.textContent = data.getCurrentSymbol();
+            data.togglePlayer();
         }
     }
 
-    function toggleSymbol(){
-        return _playerSymbol = _playerSymbol === 'X' ? 'O' : 'X';
+    function _setUpListeners(){
+        ui.DOM.board.addEventListener('click', _handleClick);
     }
-
-    function setSymbol(character){
-        let validated;
-
-        validated = _validateInput(character);
-        if(validated){
-            _playerSymbol = validated;
-        }
-    }
-
-    function setUpListeners(){
-        _DOM.board.addEventListener('click', _handleClick);
-    }
-
-    return {setUpListeners, toggleSymbol, setSymbol};
-})();
-
-let controller = (function(data, view){
 
     function init(){
-        view.setUpListeners();
+        _setUpListeners();
     }
 
     return {init};
