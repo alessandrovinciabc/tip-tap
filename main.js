@@ -1,7 +1,7 @@
 let game = (function(){
-    let playerBehaviour, players, currentPlayer, gameBoard;
+    let _currentPlayer, _playerBehaviour, players, gameBoard;
 
-    playerBehaviour = {
+    _playerBehaviour = {
         set name(newName){
             this.name = newName;
         },
@@ -15,14 +15,14 @@ let game = (function(){
         }
     };
 
-    function createPlayer(name = '', symbol = ''){
-        let player = Object.create(playerBehaviour);
+    function _createPlayer(name = '', symbol = ''){
+        let player = Object.create(_playerBehaviour);
         player.nick = name;
         player.sym = symbol;
         return player;
     }
 
-    players = [createPlayer('P1', 'X'), createPlayer('P2', 'O')];
+    players = [_createPlayer('P1', 'X'), _createPlayer('P2', 'O')];
 
     _currentPlayer = 0;
 
@@ -33,11 +33,6 @@ let game = (function(){
         for(let i=0; i < 9; ++i){
             _squares.push('');
         }
-        _squares = [
-            'X', 'O', 'X',
-            'O', 'X', 'O',
-            ' ', 'O', 'X'
-        ];
         
         function log(){
             let result = '';
@@ -78,6 +73,81 @@ let game = (function(){
         return {log, getBoard, setSquare};
     })();
 
+    function checkWinner(){
+        let squares, winner, foundWinner;
+        squares = gameBoard.getBoard();
+
+        winner = -1;
+        foundWinner = false;
+
+        //Check Rows
+        for(let i = 0; i < 9; i += 3){
+            let stringForm;
+            if(!foundWinner){
+                stringForm = squares[i+0] + squares[i+1] + squares[i+2];
+
+                switch(stringForm){
+                    case 'XXX':
+                        winner = 0;
+                        foundWinner = true;
+                        break;
+                    case 'OOO':
+                        winner = 1;
+                        foundWinner = true;
+                        break;
+                    default:
+                        //no winner found in this row
+                        break;
+                }
+            }else{
+                //stop the loop if a winner was found
+                break;
+            }
+        }
+
+        //Check Columns
+        for(let i = 0; i < 3 && !foundWinner; ++i){
+            let stringForm;
+            if(!foundWinner){
+                stringForm = squares[i+0] + squares[i+3] + squares[i+6];
+
+                switch(stringForm){
+                    case 'XXX':
+                        winner = 0;
+                        foundWinner = true;
+                        break;
+                    case 'OOO':
+                        winner = 1;
+                        foundWinner = true;
+                        break;
+                    default:
+                        //no winner found in this row
+                        break;
+                }
+            }else{
+                //stop the loop if a winner was found
+                break;
+            }
+        }
+
+        //Check Diagonals
+        if(!foundWinner){
+            let diagonals;
+            diagonals[0] = squares[0] + squares[4] + squares[8];
+            diagonals[1] = squares[2] + squares[4] + squares[6];
+
+            if(diagonals[0] === 'XXX' || diagonals[1] === 'XXX'){
+                winner = 0;
+                foundWinner = true;
+            }else if(diagonals[0] === 'OOO' || diagonals[1] === 'OOO'){
+                winner = 1;
+                foundWinner = true;
+            }
+        }
+
+        return winner;
+    }
+
     function togglePlayer(){
         _currentPlayer = _currentPlayer === 0 ? 1 : 0;
         return _currentPlayer;
@@ -97,7 +167,7 @@ let game = (function(){
         return players[_currentPlayer].symbol;
     }
 
-    return {gameBoard, togglePlayer, setCurrentPlayer, getCurrentSymbol};
+    return {players, gameBoard, checkWinner, togglePlayer, setCurrentPlayer, getCurrentSymbol};
 })();
 
 let ui = (function(){
@@ -107,20 +177,40 @@ let ui = (function(){
         board: document.querySelector('.board'),
     };
 
-    
+    function setSquare(square, symbol){
+        square.textContent = symbol;
+    }
 
-    return {DOM};
+    function getBoard(){
+        let squares = DOM.board.querySelectorAll('.square');
+        squares = [...squares];
+        return squares.map((square)=>square.textContent);
+    }
+
+    function resetBoard(){
+        let squares = DOM.board.querySelectorAll('.square');
+        for(let i = 0; i < 9; ++i){
+            squares[i].textContent = '';
+        }
+    }
+
+    return {DOM, setSquare, getBoard, resetBoard};
 })();
 
 let controller = (function(data, view){
 
     function _handleClick(e){
-        let isSquare;
+        let isSquare, id, currentSymbol;
 
         isSquare = e.target.classList.contains('square');
 
         if(isSquare && e.target.textContent === ''){
-            e.target.textContent = data.getCurrentSymbol();
+            id = e.target.dataset.id;
+            currentSymbol = data.getCurrentSymbol();
+
+            ui.setSquare(e.target, currentSymbol);
+            data.gameBoard.setSquare(parseInt(id), currentSymbol);
+
             data.togglePlayer();
         }
     }
