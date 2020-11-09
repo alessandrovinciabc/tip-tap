@@ -36,6 +36,7 @@ body{
 }
 
 .board{
+    position: relative;
     display: grid;
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
@@ -67,4 +68,42 @@ body{
 
 .square:nth-child(5){
     border: var(--grid-size) solid var(--grid-color);
+}
+
+/*STRIKES*/ /*TODO: remove .strike, add special class dinamically*/
+
+/*Diagonal strike*/
+.strike, .diagonal{ 
+    position: absolute;
+    height: calc(300px * 1.414);
+    border: 3px solid var(--details);
+    top: -49.6px;
+    left: calc(150px + 12.8px);
+
+    transform: rotate(45deg);
+}
+
+.strike{
+    transform: rotate(-45deg);
+}
+
+/*Column strike*/
+
+.strike, .horizontal{
+    position: absolute;
+    border: 3px solid var(--details);
+    transform: rotate(0);
+
+    height: 300px;
+
+    top: 12.8px;
+    left: calc(150px + 12.8px + 100px);
+}
+
+.strike, .horizontal{
+    left: calc(150px + 12.8px);
+}
+
+.strike, .horizontal{
+    left: calc(50px + 12.8px);
 }
