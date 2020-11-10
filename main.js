@@ -74,10 +74,11 @@ let game = (function(){
     })();
 
     function checkWinner(){
-        let squares, winner, foundWinner;
+        let squares, winner, foundWinner, winPos;
         squares = gameBoard.getBoard();
 
         winner = -1;
+        winPos = 0;
         foundWinner = false;
 
         //Check Rows
@@ -90,10 +91,12 @@ let game = (function(){
                     case 'XXX':
                         winner = 0;
                         foundWinner = true;
+                        winPos = (i + 3) / 3;
                         break;
                     case 'OOO':
                         winner = 1;
                         foundWinner = true;
+                        winPos = (i + 3) / 3;
                         break;
                     default:
                         //no winner found in this row
@@ -115,10 +118,12 @@ let game = (function(){
                     case 'XXX':
                         winner = 0;
                         foundWinner = true;
+                        winPos = (i + 1) + 3;
                         break;
                     case 'OOO':
                         winner = 1;
                         foundWinner = true;
+                        winPos = (i + 1) + 3;
                         break;
                     default:
                         //no winner found in this row
@@ -132,20 +137,37 @@ let game = (function(){
 
         //Check Diagonals
         if(!foundWinner){
-            let diagonals;
+            let diagonals, checks;
+
+            diagonals = [];
+
             diagonals[0] = squares[0] + squares[4] + squares[8];
             diagonals[1] = squares[2] + squares[4] + squares[6];
 
-            if(diagonals[0] === 'XXX' || diagonals[1] === 'XXX'){
+            
+            if(diagonals[0] === 'XXX'){
                 winner = 0;
                 foundWinner = true;
-            }else if(diagonals[0] === 'OOO' || diagonals[1] === 'OOO'){
+                winPos = 7;
+            }else if(diagonals[0] === 'OOO'){
                 winner = 1;
                 foundWinner = true;
+                winPos = 7;
+            }else if(diagonals[1] === 'XXX'){
+                winner = 0;
+                foundWinner = true;
+                winPos = 8;
+
+            }else if(diagonals[1] === 'OOO'){
+                winner = 1;
+                foundWinner = true;
+                winPos = 8;
             }
         }
 
-        return winner;
+        return {winner, winPos}; //winPos tells which specific row, column or diagonal has won
+                                 //0 means none. 1-3 for rows, 4-6 for columns, 7-8 for diagonals
+                                 //(going from top to bottom or left to right)
     }
 
     function togglePlayer(){
