@@ -1,5 +1,7 @@
 let game = (function(){
-    let _currentPlayer, _playerBehaviour, players, gameBoard;
+    let _currentPlayer, _playerBehaviour, _foundWinner, players, gameBoard;
+
+    _foundWinner = false;
 
     _playerBehaviour = {
         set name(newName){
@@ -74,28 +76,27 @@ let game = (function(){
     })();
 
     function checkWinner(){
-        let squares, winner, foundWinner, winPos;
+        let squares, winner, winPos;
         squares = gameBoard.getBoard();
 
         winner = -1;
         winPos = 0;
-        foundWinner = false;
 
         //Check Rows
         for(let i = 0; i < 9; i += 3){
             let stringForm;
-            if(!foundWinner){
+            if(!_foundWinner){
                 stringForm = squares[i+0] + squares[i+1] + squares[i+2];
 
                 switch(stringForm){
                     case 'XXX':
                         winner = 0;
-                        foundWinner = true;
+                        _foundWinner = true;
                         winPos = (i + 3) / 3;
                         break;
                     case 'OOO':
                         winner = 1;
-                        foundWinner = true;
+                        _foundWinner = true;
                         winPos = (i + 3) / 3;
                         break;
                     default:
@@ -109,20 +110,20 @@ let game = (function(){
         }
 
         //Check Columns
-        for(let i = 0; i < 3 && !foundWinner; ++i){
+        for(let i = 0; i < 3 && !_foundWinner; ++i){
             let stringForm;
-            if(!foundWinner){
+            if(!_foundWinner){
                 stringForm = squares[i+0] + squares[i+3] + squares[i+6];
 
                 switch(stringForm){
                     case 'XXX':
                         winner = 0;
-                        foundWinner = true;
+                        _foundWinner = true;
                         winPos = (i + 1) + 3;
                         break;
                     case 'OOO':
                         winner = 1;
-                        foundWinner = true;
+                        _foundWinner = true;
                         winPos = (i + 1) + 3;
                         break;
                     default:
@@ -136,7 +137,7 @@ let game = (function(){
         }
 
         //Check Diagonals
-        if(!foundWinner){
+        if(!_foundWinner){
             let diagonals, checks;
 
             diagonals = [];
@@ -147,20 +148,20 @@ let game = (function(){
             
             if(diagonals[0] === 'XXX'){
                 winner = 0;
-                foundWinner = true;
+                _foundWinner = true;
                 winPos = 7;
             }else if(diagonals[0] === 'OOO'){
                 winner = 1;
-                foundWinner = true;
+                _foundWinner = true;
                 winPos = 7;
             }else if(diagonals[1] === 'XXX'){
                 winner = 0;
-                foundWinner = true;
+                _foundWinner = true;
                 winPos = 8;
 
             }else if(diagonals[1] === 'OOO'){
                 winner = 1;
-                foundWinner = true;
+                _foundWinner = true;
                 winPos = 8;
             }
         }
@@ -189,7 +190,11 @@ let game = (function(){
         return players[_currentPlayer].symbol;
     }
 
-    return {players, gameBoard, checkWinner, togglePlayer, setCurrentPlayer, getCurrentSymbol};
+    function isGameOver(){
+        return _foundWinner;
+    }
+
+    return {players, gameBoard, checkWinner, togglePlayer, setCurrentPlayer, getCurrentSymbol, isGameOver};
 })();
 
 let ui = (function(){
@@ -197,6 +202,7 @@ let ui = (function(){
 
     DOM = {
         board: document.querySelector('.board'),
+        strike: document.querySelector('.strike'),
     };
 
     function setSquare(square, symbol){
@@ -216,24 +222,51 @@ let ui = (function(){
         }
     }
 
-    return {DOM, setSquare, getBoard, resetBoard};
+    function setStrike(pos){
+        let direction;
+        DOM.strike.style.display = 'initial';
+
+        if(pos >= 1 && pos <= 3){
+            direction = 'horizontal';
+        }else if(pos >= 4 && pos <= 6){
+            direction = 'column';
+        }else if(pos === 7 || pos === 8){
+            direction = 'diagonal';
+        }
+
+        DOM.strike.classList.toggle(direction);
+        DOM.strike.classList.toggle('pos' + pos);
+    }
+
+    function displayWinner(name){
+
+    }
+
+    return {DOM, setSquare, getBoard, resetBoard, setStrike, displayWinner};
 })();
 
 let controller = (function(data, view){
 
     function _handleClick(e){
-        let isSquare, id, currentSymbol;
+        let isSquare, id, currentSymbol, winningPlay;
 
         isSquare = e.target.classList.contains('square');
 
-        if(isSquare && e.target.textContent === ''){
-            id = e.target.dataset.id;
-            currentSymbol = data.getCurrentSymbol();
+        if(!data.isGameOver()){
+            if(isSquare && e.target.textContent === ''){
+                id = e.target.dataset.id;
+                currentSymbol = data.getCurrentSymbol();
+    
+                ui.setSquare(e.target, currentSymbol);
+                data.gameBoard.setSquare(parseInt(id), currentSymbol);
+    
+                data.togglePlayer();
 
-            ui.setSquare(e.target, currentSymbol);
-            data.gameBoard.setSquare(parseInt(id), currentSymbol);
-
-            data.togglePlayer();
+                winningPlay = data.checkWinner();
+                if(winningPlay.winner !== -1){
+                    ui.setStrike(winningPlay.winPos);
+                }
+            }
         }
     }
 

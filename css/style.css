@@ -70,40 +70,68 @@ body{
     border: var(--grid-size) solid var(--grid-color);
 }
 
-/*STRIKES*/ /*TODO: remove .strike, add special class dinamically*/
-
-/*Diagonal strike*/
-.strike, .diagonal{ 
-    position: absolute;
-    height: calc(300px * 1.414);
-    border: 3px solid var(--details);
-    top: -49.6px;
-    left: calc(150px + 12.8px);
-
-    transform: rotate(45deg);
-}
+            /*STRIKES*/
 
 .strike{
-    transform: rotate(-45deg);
-}
-
-/*Column strike*/
-
-.strike, .horizontal{
+    display: none;
     position: absolute;
     border: 3px solid var(--details);
+}
+
+.horizontal{
+    transform: rotate(90deg);
+
+    height: 300px;
+
+    left: calc(150px + 12.8px);
+}
+
+.column{
     transform: rotate(0);
 
     height: 300px;
 
     top: 12.8px;
-    left: calc(150px + 12.8px + 100px);
 }
 
-.strike, .horizontal{
+.diagonal{
+    height: calc(300px * 1.414);
+
+    top: -49.6px;
     left: calc(150px + 12.8px);
 }
 
-.strike, .horizontal{
+/*Row  strike*/
+.pos1{
+    top: calc(12.8px - 100px);
+}
+
+.pos2{
+    top: calc(12.8px);
+}
+
+.pos3{
+    top: calc(12.8px + 100px);
+}
+
+/*Column strike*/
+.pos4{
     left: calc(50px + 12.8px);
+}
+
+.pos5{
+    left: calc(150px + 12.8px);
+}
+
+.pos6{
+    left: calc(150px + 12.8px + 100px);
+}
+
+/*Diagonal strike*/
+.pos7{
+    transform: rotate(-45deg);
+}
+
+.pos8{
+    transform: rotate(45deg);
 }
