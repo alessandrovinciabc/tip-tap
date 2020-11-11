@@ -33,6 +33,32 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+}
+
+.setup{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    margin-bottom: 50px;
+}
+
+.setup > label{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0;
+    padding: 0;
+
+    color: white;
+}
+
+.setup > * > input[type="text"]{
+    width: 10rem;
+    margin-left: 10px;
 }
 
 .board{
@@ -44,6 +70,8 @@ body{
     background-color: var(--primary);
     padding: 0.8rem;
     border-radius: 5px;
+
+    margin-bottom: 50px;
 }
 
 .square{
@@ -134,4 +162,30 @@ body{
 
 .pos8{
     transform: rotate(45deg);
+}
+
+/*POPUP*/
+.popup{
+    display: none;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); /*translate is relative to the element*/
+    z-index: 1;
+    width: 360px;
+    height: 100px;
+
+    border-radius: 5px;
+
+    background-color: var(--details);
+    color: var(--cta);
+}
+
+.popup-text{
+    background-color: white;
+    font-size: 2rem;
 }

@@ -138,7 +138,7 @@ let game = (function(){
 
         //Check Diagonals
         if(!_foundWinner){
-            let diagonals, checks;
+            let diagonals;
 
             diagonals = [];
 
@@ -166,9 +166,24 @@ let game = (function(){
             }
         }
 
+        if(!_foundWinner){
+            let filledSquares = squares.reduce((total, current)=>{
+                if(current !== ''){
+                    return total + 1;
+                }
+            }, 0);
+
+            if(filledSquares === 9){
+                winner = 2;
+            }
+        }
+
         return {winner, winPos}; //winPos tells which specific row, column or diagonal has won
                                  //0 means none. 1-3 for rows, 4-6 for columns, 7-8 for diagonals
                                  //(going from top to bottom or left to right)
+
+                                 //winner tells which player has won. 0-1 for p1 or p2, 2 for a tie
+                                 //-1 for no winner
     }
 
     function togglePlayer(){
@@ -198,11 +213,25 @@ let game = (function(){
 })();
 
 let ui = (function(){
-    let DOM;
+    let DOM, screenBlocker;
+
+    screenBlocker = document.createElement('div');
+
+    screenBlocker.style.position = 'absolute';
+    screenBlocker.style.top = '0';
+    screenBlocker.style.left = '0';
+    screenBlocker.style.height = '100vh';
+    screenBlocker.style.width = '100vw';
+    screenBlocker.style.backgroundColor = 'rgba(0,0,0,0.5)';
 
     DOM = {
+        body: document.querySelector('body'),
         board: document.querySelector('.board'),
         strike: document.querySelector('.strike'),
+        screenBlocker,
+        popup: document.querySelector('.popup'),
+        popupBtn: document.querySelector('.popup > button'),
+
     };
 
     function setSquare(square, symbol){
@@ -238,11 +267,27 @@ let ui = (function(){
         DOM.strike.classList.toggle('pos' + pos);
     }
 
-    function displayWinner(name){
-
+    function toggleScreenBlocker(){
+        if(DOM.body.contains(screenBlocker)){
+            DOM.body.removeChild(screenBlocker);
+        }else{
+            DOM.body.appendChild(screenBlocker);
+        }
     }
 
-    return {DOM, setSquare, getBoard, resetBoard, setStrike, displayWinner};
+    function displayPopup(text){
+        toggleScreenBlocker();
+        DOM.popup.style.display = 'flex';
+        DOM.popup.children[0].textContent = text;
+    }
+
+    function hidePopup(){
+        toggleScreenBlocker();
+        DOM.popup.style.display = 'none';
+        DOM.popup.children[0].textContent = '';
+    }
+
+    return {DOM, setSquare, getBoard, resetBoard, setStrike, toggleScreenBlocker, displayPopup, hidePopup};
 })();
 
 let controller = (function(data, view){
@@ -264,14 +309,24 @@ let controller = (function(data, view){
 
                 winningPlay = data.checkWinner();
                 if(winningPlay.winner !== -1){
-                    ui.setStrike(winningPlay.winPos);
+                    if(winningPlay.winner === 2){ //tie
+                        ui.displayPopup("It's a tie!");
+                    }else{
+                        ui.setStrike(winningPlay.winPos);
+                        ui.displayPopup(data.players[winningPlay.winner].nick + ' won!');
+                    }
                 }
             }
         }
     }
 
+    function _popupOkBtn(e){
+        ui.hidePopup();
+    }
+
     function _setUpListeners(){
         ui.DOM.board.addEventListener('click', _handleClick);
+        ui.DOM.popupBtn.addEventListener('click', _popupOkBtn);
     }
 
     function init(){
