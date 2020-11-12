@@ -206,7 +206,7 @@ let game = (function(){
     }
 
     function isGameOver(){
-        return _foundWinner;
+        return checkWinner().winner >= 0 ? true : false;
     }
 
     return {players, gameBoard, checkWinner, togglePlayer, setCurrentPlayer, getCurrentSymbol, isGameOver};
