@@ -36,31 +36,6 @@ body{
     flex-direction: column;
 }
 
-.setup{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-    margin-bottom: 50px;
-}
-
-.setup > label{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    margin: 0;
-    padding: 0;
-
-    color: white;
-}
-
-.setup > * > input[type="text"]{
-    width: 10rem;
-    margin-left: 10px;
-}
-
 .board{
     position: relative;
     display: grid;
@@ -70,8 +45,6 @@ body{
     background-color: var(--primary);
     padding: 0.8rem;
     border-radius: 5px;
-
-    margin-bottom: 50px;
 }
 
 .square{
