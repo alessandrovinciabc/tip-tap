@@ -225,12 +225,14 @@ let ui = (function(){
     screenBlocker.style.backgroundColor = 'rgba(0,0,0,0.5)';
 
     DOM = {
+        root: document.querySelector(':root'),
         body: document.querySelector('body'),
         board: document.querySelector('.board'),
         strike: document.querySelector('.strike'),
         screenBlocker,
         popup: document.querySelector('.popup'),
         popupBtn: document.querySelector('.popup > button'),
+        slider: document.querySelector('.slider'),
 
     };
 
@@ -287,7 +289,21 @@ let ui = (function(){
         DOM.popup.children[0].textContent = '';
     }
 
-    return {DOM, setSquare, getBoard, resetBoard, setStrike, toggleScreenBlocker, displayPopup, hidePopup};
+    function toggleSlider(){
+        let newColor;
+
+        DOM.slider.classList.toggle('slider');
+        DOM.slider.classList.toggle('slider-x');
+
+        newColor =  DOM.slider.classList.contains('slider-x') ? 'var(--cta)' : 'var(--primary)';
+
+        DOM.root.style.setProperty('--slider-color', newColor);
+    }
+
+    return {
+        DOM, setSquare, getBoard, resetBoard, setStrike, toggleScreenBlocker,
+        displayPopup, hidePopup, toggleSlider,
+    };
 })();
 
 let controller = (function(data, view){
@@ -320,13 +336,10 @@ let controller = (function(data, view){
         }
     }
 
-    function _popupOkBtn(e){
-        ui.hidePopup();
-    }
-
     function _setUpListeners(){
         ui.DOM.board.addEventListener('click', _handleClick);
-        ui.DOM.popupBtn.addEventListener('click', _popupOkBtn);
+        ui.DOM.popupBtn.addEventListener('click', ui.hidePopup);
+        ui.DOM.slider.addEventListener('click', ui.toggleSlider);
     }
 
     function init(){
