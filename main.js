@@ -1,7 +1,8 @@
 let game = (function(){
-    let _currentPlayer, _playerBehaviour, _foundWinner, players, gameBoard;
+    let _currentPlayer, _playerBehaviour, _foundWinner, _isTie, players, gameBoard;
 
     _foundWinner = false;
+    _isTie = false;
 
     _playerBehaviour = {
         set name(newName){
@@ -175,6 +176,7 @@ let game = (function(){
 
             if(filledSquares === 9){
                 winner = 2;
+                _isTie = true;
             }
         }
 
@@ -206,7 +208,7 @@ let game = (function(){
     }
 
     function isGameOver(){
-        return checkWinner().winner >= 0 ? true : false;
+        return _foundWinner || _isTie;
     }
 
     return {players, gameBoard, checkWinner, togglePlayer, setCurrentPlayer, getCurrentSymbol, isGameOver};
