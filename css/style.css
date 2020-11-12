@@ -170,12 +170,14 @@ body{
 }
 
 .setup{
+    display: none;
     height: 100px;
     width: 360px;
-    display: flex;
     justify-content: space-evenly;
     align-items: center;
     flex-direction: column;
+
+    color: white;
 }
 
 .slider{
@@ -234,4 +236,18 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.reset-btn{
+    position: absolute;
+    display: none;
+    margin-top: 1rem;
+    padding: 2px 5px;
+
+    font-size: 1.2rem;
+    color: var(--cta);
+
+    bottom: -50px;
+    left: 50%;
+    transform: translate(-50%, 0);
 }

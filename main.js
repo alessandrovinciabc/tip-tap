@@ -5,11 +5,11 @@ let game = (function(){
 
     _playerBehaviour = {
         set name(newName){
-            this.name = newName;
+            this.nick = newName;
         },
 
         get name(){
-            return this.name;
+            return this.nick;
         },
 
         get symbol(){
@@ -26,7 +26,7 @@ let game = (function(){
 
     players = [_createPlayer('P1', 'X'), _createPlayer('P2', 'O')];
 
-    _currentPlayer = 0;
+    _currentPlayer = 1;
 
     gameBoard = (function(){
         let _squares;
@@ -232,7 +232,9 @@ let ui = (function(){
         screenBlocker,
         popup: document.querySelector('.popup'),
         popupBtn: document.querySelector('.popup > button'),
+        setup: document.querySelector('.setup'),
         slider: document.querySelector('.slider'),
+        resetBtn: document.querySelector('.reset-btn'),
 
     };
 
@@ -277,16 +279,32 @@ let ui = (function(){
         }
     }
 
-    function displayPopup(text){
+    function displayPopup(text, type){
+
         toggleScreenBlocker();
+
         DOM.popup.style.display = 'flex';
         DOM.popup.children[0].textContent = text;
+
+        if(type === 'setup'){
+            DOM.setup.style.display = 'flex';
+        }
+
     }
 
     function hidePopup(){
         toggleScreenBlocker();
         DOM.popup.style.display = 'none';
+        DOM.setup.style.display = 'none';
         DOM.popup.children[0].textContent = '';
+    }
+
+    function getSetup(){
+        let p1, p2;
+        p1 = DOM.setup.querySelector('#name1').value;
+        p2 = DOM.setup.querySelector('#name2').value;
+
+        return {p1, p2};
     }
 
     function toggleSlider(){
@@ -300,9 +318,13 @@ let ui = (function(){
         DOM.root.style.setProperty('--slider-color', newColor);
     }
 
+    function showResetBtn(){
+        DOM.resetBtn.style.display = 'block';
+    }
+
     return {
         DOM, setSquare, getBoard, resetBoard, setStrike, toggleScreenBlocker,
-        displayPopup, hidePopup, toggleSlider,
+        displayPopup, hidePopup, toggleSlider, getSetup, showResetBtn
     };
 })();
 
@@ -336,14 +358,38 @@ let controller = (function(data, view){
         }
     }
 
+    function _hidePopup(e){
+        let names;
+        names = ui.getSetup();
+        data.players[0].name = names.p1;
+        data.players[1].name = names.p2;
+
+        ui.hidePopup();
+
+        if(data.isGameOver()){
+            ui.showResetBtn();
+        }
+    }
+
+    function _clickSlider(e){
+        data.togglePlayer();
+        ui.toggleSlider();
+    }
+
+    function _clickReset(e){
+        location.reload();
+    }
+
     function _setUpListeners(){
         ui.DOM.board.addEventListener('click', _handleClick);
-        ui.DOM.popupBtn.addEventListener('click', ui.hidePopup);
-        ui.DOM.slider.addEventListener('click', ui.toggleSlider);
+        ui.DOM.popupBtn.addEventListener('click', _hidePopup);
+        ui.DOM.slider.addEventListener('click', _clickSlider);
+        ui.DOM.resetBtn.addEventListener('click', _clickReset);
     }
 
     function init(){
         _setUpListeners();
+        ui.displayPopup('Settings', 'setup');
     }
 
     return {init};
